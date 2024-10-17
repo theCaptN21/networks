@@ -23,10 +23,10 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
     - name: Build Docker image
-      run: docker build -t my-flask-app:${{ github.sha }} .
+      run: docker build -t my-flask-app:${{ secrets.DOCKER_HUB_USERNAME }} .
 
     - name: Push Docker image to DockerHub
-      run: docker push my-flask-app:${{ github.sha }}
+      run: docker push my-flask-app:${{ secrets.DOCKER_HUB_USERNAME }}
 
   test:
     runs-on: ubuntu-latest
@@ -34,16 +34,16 @@ jobs:
 
     steps:
     - name: Pull Docker image
-      run: docker pull my-flask-app:${{ github.sha }}
+      run: docker pull my-flask-app:${{ secrets.DOCKER_HUB_USERNAME }}
 
     - name: Create Docker network
       run: docker network create my_custom_network
 
     - name: Run container 1
-      run: docker run -d --name container1 --network my_custom_network my-flask-app:${{ github.sha }}
+      run: docker run -d --name container1 --network my_custom_network my-flask-app:${{ secrets.DOCKER_HUB_USERNAME }}
 
     - name: Run container 2
-      run: docker run -d --name container2 --network my_custom_network my-flask-app:${{ github.sha }}
+      run: docker run -d --name container2 --network my_custom_network my-flask-app:${{ secrets.DOCKER_HUB_USERNAME }}
 
     - name: Verify container communication with curl
       run: docker exec container2 curl -s container1:5000
